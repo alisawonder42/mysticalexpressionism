@@ -92,7 +92,14 @@ h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0
 .art-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px 24px; }
 .art-card { grid-column: span 4; }
 .art-card-image { overflow: hidden; background: var(--bg-soft); margin-bottom: 16px; }
-.art-card img { aspect-ratio: 1; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.art-card img {
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(100svh, 100%);
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
 .art-card:hover img { transform: scale(1.03); }
 .art-meta { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
 .art-title { font-size: 1.35rem; line-height: 1.15; margin-bottom: 4px; }
@@ -143,8 +150,16 @@ h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0
 
 .artwork-page { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; padding: 72px 0 140px; }
 .artwork-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr); gap: 6vw; align-items: start; }
-.artwork-images { display: grid; gap: 16px; background: transparent; }
-.artwork-images img { background: var(--bg-soft); max-height: 82vh; object-fit: contain; }
+.artwork-images { display: grid; gap: 16px; background: transparent; justify-items: start; }
+.artwork-images img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100svh - 120px);
+  background: var(--bg-soft);
+  object-fit: contain;
+}
 .artwork-info { position: sticky; top: 40px; }
 .artwork-info h1 { font-size: clamp(2.6rem, 4.6vw, 5.2rem); }
 .artwork-price { font-size: 1.15rem; margin-bottom: 8px; }
