@@ -1,29 +1,18 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mladen-ilic-art",
+  "account_id": "7ad3dd38c4ca3189d079fb7efdc775f7",
   "compatibility_date": "2026-09-04",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "main": "vinext/server/fetch-handler",
   "assets": {
     "directory": "dist/client",
     "not_found_handling": "none",
     "binding": "ASSETS"
   },
-  "cache": {
-    "enabled": true
-  },
-  "version_metadata": {
-    "binding": "CF_VERSION_METADATA"
-  },
-  "images": {
-    "binding": "IMAGES"
-  },
-  "kv_namespaces": [
-    {
-      "binding": "VINEXT_KV_CACHE",
-      "id": "<your-kv-namespace-id>"
-    }
-  ]
+  "cache": { "enabled": true },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "images": { "binding": "IMAGES" },
+  "workers_dev": true,
+  "observability": { "enabled": true }
 }
