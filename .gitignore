@@ -6,3 +6,5 @@ out
 .wrangler
 .dev.vars
 .DS_Store
+/dist/
+.vinext/
