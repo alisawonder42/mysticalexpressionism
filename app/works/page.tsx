@@ -1,16 +1,35 @@
 import type { Metadata } from "next";
+import { JsonLd } from "../components/JsonLd";
 import { ArtworkCard } from "../components/ArtworkCard";
 import { artworks } from "../data/artworks";
+import { ARTIST_PORTRAIT, PORTRAIT_OG_IMAGE, worksPageJsonLd } from "../lib/seo";
 
 export const metadata: Metadata = {
-  title: "Works",
+  title: "Original Paintings",
   description:
-    "The ten most recent original paintings by Mladen Ilic, with dimensions, availability and prices.",
+    "Original paintings by Mladen Ilic (Mladen Ilić), painter in Novi Sad, Serbia. Unique oil works, newest first — the same artist known on Artfinder as Mladen Ilić. Dimensions, availability and prices.",
+  alternates: { canonical: "/works" },
+  openGraph: {
+    title: "Original Paintings — Mladen Ilic (Mladen Ilić)",
+    description:
+      "Unique original paintings by Mladen Ilic, painter in Novi Sad. Also known on Artfinder as Mladen Ilić.",
+    url: "/works",
+    type: "website",
+    images: [PORTRAIT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Original Paintings — Mladen Ilic (Mladen Ilić)",
+    description:
+      "Unique original paintings by Mladen Ilic, painter in Novi Sad. Also known on Artfinder as Mladen Ilić.",
+    images: [ARTIST_PORTRAIT],
+  },
 };
 
 export default function WorksPage() {
   return (
     <main className="page">
+      <JsonLd data={worksPageJsonLd()} />
       <div className="page-intro">
         <div className="section-label">Original paintings</div>
         <h1>Works</h1>

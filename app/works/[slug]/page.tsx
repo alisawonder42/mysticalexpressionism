@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { artworks, dimensionLabel, formatEur, getArtwork } from "../../data/artworks";
+import { JsonLd } from "../../components/JsonLd";
+import { artworks, formatEur, getArtwork } from "../../data/artworks";
 import { CONTACT_EMAIL } from "../../data/copy";
+import { artworkJsonLd, artworkMetadata } from "../../lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,16 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const artwork = getArtwork(slug);
   if (!artwork) return {};
-
-  const facts = [artwork.year, artwork.medium, dimensionLabel(artwork)]
-    .filter(Boolean)
-    .join(". ");
-
-  return {
-    title: artwork.title,
-    description: `${artwork.title}. ${facts}. Original painting by Mladen Ilic.`,
-    alternates: { canonical: `/works/${artwork.slug}` },
-  };
+  return artworkMetadata(artwork);
 }
 
 export default async function ArtworkPage({ params }: Props) {
@@ -49,6 +42,7 @@ export default async function ArtworkPage({ params }: Props) {
 
   return (
     <main className="artwork-page">
+      <JsonLd data={artworkJsonLd(artwork)} />
       <div className="artwork-layout">
         <div className="artwork-images">
           {artwork.images.map((image, index) => (

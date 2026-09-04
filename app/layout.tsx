@@ -1,7 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { JsonLd } from "./components/JsonLd";
 import { CONTACT_EMAIL, INSTAGRAM_URL } from "./data/copy";
+import {
+  ARTFINDER_PROFILE_URL,
+  ARTIST_PORTRAIT,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_TITLE,
+  OG_DESCRIPTION,
+  PORTRAIT_OG_IMAGE,
+  SITE_KEYWORDS,
+  SITE_NAME,
+  TITLE_TEMPLATE,
+  siteGraphJsonLd,
+} from "./lib/seo";
 import "./globals.css";
 
 const editorial = Cormorant_Garamond({
@@ -20,19 +33,42 @@ const sans = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mladenilic.art"),
   title: {
-    default: "Mladen Ilic — Painter",
-    template: "%s — Mladen Ilic",
+    default: DEFAULT_TITLE,
+    template: TITLE_TEMPLATE,
   },
-  description:
-    "Mladen Ilic is a Serbian painter and professor of Serbian language and literature, based in Novi Sad. Original paintings and collector enquiries.",
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: "https://mladenilic.art" }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  keywords: SITE_KEYWORDS,
+  category: "art",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Mladen Ilic — Painter",
-    description:
-      "An independent painting practice rooted in intuition, emotional experience and the relationship between gesture and material.",
+    title: DEFAULT_TITLE,
+    description: OG_DESCRIPTION,
     url: "https://mladenilic.art",
-    siteName: "Mladen Ilic",
+    siteName: SITE_NAME,
     type: "website",
+    locale: "en_GB",
+    images: [PORTRAIT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: OG_DESCRIPTION,
+    images: [ARTIST_PORTRAIT],
   },
 };
 
@@ -47,6 +83,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
         <html lang="en" className={`${editorial.variable} ${sans.variable}`}>
       <body className={sans.className}>
+        <link rel="me" href={ARTFINDER_PROFILE_URL} />
+        <link rel="me" href={INSTAGRAM_URL} />
+        <JsonLd data={siteGraphJsonLd()} />
         <header className="site-header">
           <Link className="brand" href="/">
             Mladen Ilic
@@ -67,13 +106,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </div>
           <div className="footer-links">
             <a href={`mailto:${CONTACT_EMAIL}`}>Email</a>
-            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer me">
               Instagram
             </a>
             <a
-              href="https://www.artfinder.com/en-GB/artist/mladen-ilic/"
+              href={ARTFINDER_PROFILE_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noreferrer me"
             >
               Artfinder
             </a>
