@@ -1,29 +1,28 @@
+// Cloudflare Workers deployment for mladenilic.art, built by vinext.
+// Deploy locally with `npm run deploy:vinext`; CI deploys on every push to
+// main (see .github/workflows/deploy.yml).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mladen-ilic-art",
+  // Same Cloudflare account as the katarinarankovic-fyi worker; account ids
+  // are not secret.
+  "account_id": "7ad3dd38c4ca3189d079fb7efdc775f7",
   "compatibility_date": "2026-09-04",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
+  "compatibility_flags": ["nodejs_compat"],
   "main": "vinext/server/fetch-handler",
   "assets": {
     "directory": "dist/client",
     "not_found_handling": "none",
     "binding": "ASSETS"
   },
-  "cache": {
-    "enabled": true
-  },
-  "version_metadata": {
-    "binding": "CF_VERSION_METADATA"
-  },
-  "images": {
-    "binding": "IMAGES"
-  },
-  "kv_namespaces": [
-    {
-      "binding": "VINEXT_KV_CACHE",
-      "id": "<your-kv-namespace-id>"
-    }
-  ]
+  // Route-level ISR through the Workers Cache API. Needs no binding.
+  "cache": { "enabled": true },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "images": { "binding": "IMAGES" },
+  // Preview deploys go to a *.workers.dev URL via
+  // `npm run deploy:vinext -- --preview`. The mladenilic.art custom domain is
+  // attached to this service through the Cloudflare dashboard so that a
+  // deploy-only API token does not also need Workers Routes permissions.
+  "workers_dev": true,
+  "observability": { "enabled": true }
 }
