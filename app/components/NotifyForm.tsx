@@ -40,7 +40,13 @@ export function NotifyForm() {
   }
 
   return (
-    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
+    <form
+      className="notify-form"
+      onSubmit={onSubmit}
+      action="/api/notify"
+      method="post"
+      data-notify="api"
+    >
       <label className="notify-label">
         <span>Email</span>
         <input
