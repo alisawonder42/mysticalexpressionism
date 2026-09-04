@@ -21,7 +21,3 @@ export const ARTIST_PORTRAIT =
 export const CONTACT_EMAIL = "mysticalexpressionismpaintings@gmail.com";
 
 export const INSTAGRAM_URL = "https://www.instagram.com/mysticalexpressionism/";
-
-export const NOTIFY_MAILTO = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-  "Notify me of new paintings",
-)}`;

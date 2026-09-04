@@ -2,15 +2,20 @@ import Link from "next/link";
 import { ArtworkCard } from "./components/ArtworkCard";
 import { ProcessVideo } from "./components/ProcessVideo";
 import { homepageArtworks } from "./data/artworks";
+import { NotifyForm } from "./components/NotifyForm";
 import {
   ABOUT_PARAGRAPHS,
   ARTIST_PORTRAIT,
   CONTACT_EMAIL,
-  NOTIFY_MAILTO,
   PROCESS_PARAGRAPHS,
 } from "./data/copy";
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ notified?: string }>;
+}) {
+  const { notified } = await searchParams;
   return (
     <main>
       <section className="hero-artist">
@@ -81,9 +86,14 @@ export default function HomePage() {
           <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
             Contact Mladen
           </a>
-          <a className="button" href={NOTIFY_MAILTO}>
-            Get notified of new pieces
-          </a>
+        </div>
+        <div className="notify-block">
+          <div className="section-label">New work</div>
+          <p>Leave your email to be notified when new paintings become available.</p>
+          <NotifyForm
+            nextUrl="https://mladenilic.art/?notified=1"
+            sent={notified === "1"}
+          />
         </div>
       </section>
     </main>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CONTACT_EMAIL, INSTAGRAM_URL, NOTIFY_MAILTO } from "../data/copy";
+import { NotifyForm } from "../components/NotifyForm";
+import { CONTACT_EMAIL, INSTAGRAM_URL } from "../data/copy";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -7,7 +8,12 @@ export const metadata: Metadata = {
     "Contact Mladen Ilic about available paintings and collector enquiries.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ notified?: string }>;
+}) {
+  const { notified } = await searchParams;
   return (
     <main className="page">
       <div className="page-intro">
@@ -39,9 +45,14 @@ export default function ContactPage() {
           <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
             Send an email
           </a>
-          <a className="button" href={NOTIFY_MAILTO}>
-            Get notified of new pieces
-          </a>
+        </div>
+        <div className="notify-block">
+          <div className="section-label">New work</div>
+          <p>Leave your email to be notified when new paintings become available.</p>
+          <NotifyForm
+            nextUrl="https://mladenilic.art/contact?notified=1"
+            sent={notified === "1"}
+          />
         </div>
       </div>
     </main>

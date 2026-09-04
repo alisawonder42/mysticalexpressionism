@@ -156,6 +156,12 @@ h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0
 .artwork-description p { margin-bottom: 1em; }
 .artwork-note { margin-top: 22px; max-width: 420px; }
 .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.notify-block { margin-top: 40px; max-width: 520px; }
+.notify-block p { color: var(--muted); margin-bottom: 16px; }
+.notify-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.notify-label { display: grid; gap: 8px; flex: 1 1 240px; color: var(--muted); font-size: 0.82rem; }
+.notify-label input { min-height: 48px; }
+.notify-status { color: var(--muted); font-size: 0.95rem; margin: 12px 0 0; }
 
 .split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 8vw; align-items: start; }
 .content-narrow { max-width: 780px; }
