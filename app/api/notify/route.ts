@@ -3,15 +3,18 @@ import { createMimeMessage } from "mimetext/browser";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
 const NOTIFY_FROM = "notify@mladenilic.art";
+const NOTIFY_SUBJECT = "Notify me of new paintings";
 
 type EmailBinding = {
-  send: (message: unknown) => Promise<void>;
+  send: (message: unknown) => Promise<unknown>;
 };
+
+type SendResult = { ok: boolean; error?: string };
 
 export async function POST(request: Request) {
   const email = await readEmail(request);
   if (!email || !EMAIL_PATTERN.test(email)) {
-    return Response.json({ ok: false }, { status: 400 });
+    return Response.json({ ok: false, error: "invalid email" }, { status: 400 });
   }
 
   const result = await sendNotice(email);
@@ -35,40 +38,73 @@ async function readEmail(request: Request): Promise<string> {
   }
 }
 
-async function sendNotice(subscriber: string): Promise<{ ok: boolean; error?: string }> {
+async function sendNotice(subscriber: string): Promise<SendResult> {
   const text = `${subscriber} asked to be notified when new paintings become available.`;
+  const errors: string[] = [];
 
-  const binding = await getEmailBinding();
-  if (binding) {
-    const structured = await trySend(binding, {
-      from: NOTIFY_FROM,
-      to: NOTIFY_TO,
-      replyTo: subscriber,
-      subject: "Notify me of new paintings",
-      text,
-    });
-    if (structured.ok) return structured;
-
-    const mime = await sendMime(binding, subscriber, text);
-    if (mime.ok) return mime;
-    return mime;
+  const bindingResult = await getEmailBinding();
+  if (bindingResult.error) {
+    errors.push(bindingResult.error);
   }
 
-  return { ok: false, error: "email binding unavailable" };
+  const binding = bindingResult.binding;
+  if (binding) {
+    const attempts: unknown[] = [
+      {
+        from: { email: NOTIFY_FROM, name: "mladenilic.art" },
+        to: NOTIFY_TO,
+        replyTo: subscriber,
+        subject: NOTIFY_SUBJECT,
+        text,
+      },
+      {
+        from: NOTIFY_FROM,
+        to: NOTIFY_TO,
+        replyTo: subscriber,
+        subject: NOTIFY_SUBJECT,
+        text,
+      },
+      {
+        from: NOTIFY_FROM,
+        subject: NOTIFY_SUBJECT,
+        text,
+        replyTo: subscriber,
+      },
+    ];
+
+    for (const [index, message] of attempts.entries()) {
+      const result = await trySend(binding, message);
+      if (result.ok) return result;
+      errors.push(`structured[${index}]: ${result.error}`);
+    }
+
+    const raw = await sendRawMime(binding, subscriber, text);
+    if (raw.ok) return raw;
+    errors.push(`raw: ${raw.error}`);
+
+    const mime = await sendMimeText(binding, subscriber, text);
+    if (mime.ok) return mime;
+    errors.push(`mimetext: ${mime.error}`);
+  }
+
+  return { ok: false, error: errors.join(" | ") || "email binding unavailable" };
 }
 
-async function getEmailBinding(): Promise<EmailBinding | null> {
+async function getEmailBinding(): Promise<{ binding: EmailBinding | null; error?: string }> {
   try {
     const { env } = (await import("cloudflare:workers")) as {
       env: { NOTIFY_EMAIL?: EmailBinding };
     };
-    return env.NOTIFY_EMAIL ?? null;
-  } catch {
-    return null;
+    if (!env.NOTIFY_EMAIL) {
+      return { binding: null, error: "NOTIFY_EMAIL binding missing" };
+    }
+    return { binding: env.NOTIFY_EMAIL };
+  } catch (error) {
+    return { binding: null, error: `workers import: ${errorMessage(error)}` };
   }
 }
 
-async function trySend(binding: EmailBinding, message: unknown): Promise<{ ok: boolean; error?: string }> {
+async function trySend(binding: EmailBinding, message: unknown): Promise<SendResult> {
   try {
     await binding.send(message);
     return { ok: true };
@@ -78,11 +114,30 @@ async function trySend(binding: EmailBinding, message: unknown): Promise<{ ok: b
   }
 }
 
-async function sendMime(
+async function sendRawMime(
   binding: EmailBinding,
   subscriber: string,
   text: string,
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<SendResult> {
+  try {
+    const { EmailMessage } = (await import("cloudflare:email")) as {
+      EmailMessage: new (from: string, to: string, raw: string) => unknown;
+    };
+    return await trySend(
+      binding,
+      new EmailMessage(NOTIFY_FROM, NOTIFY_TO, buildRawMessage(subscriber, text)),
+    );
+  } catch (error) {
+    console.error("notify raw mime failed", error);
+    return { ok: false, error: errorMessage(error) };
+  }
+}
+
+async function sendMimeText(
+  binding: EmailBinding,
+  subscriber: string,
+  text: string,
+): Promise<SendResult> {
   try {
     const { EmailMessage } = (await import("cloudflare:email")) as {
       EmailMessage: new (from: string, to: string, raw: string) => unknown;
@@ -90,19 +145,54 @@ async function sendMime(
     const msg = createMimeMessage();
     msg.setSender({ name: "mladenilic.art", addr: NOTIFY_FROM });
     msg.setRecipient(NOTIFY_TO);
-    msg.setSubject("Notify me of new paintings");
+    msg.setSubject(NOTIFY_SUBJECT);
     msg.setHeader("Reply-To", subscriber);
+    msg.setHeader("Date", rfc5322Date());
+    msg.setHeader("Message-ID", `<${crypto.randomUUID()}@mladenilic.art>`);
     msg.addMessage({ contentType: "text/plain", data: text });
     return await trySend(binding, new EmailMessage(NOTIFY_FROM, NOTIFY_TO, msg.asRaw()));
   } catch (error) {
-    console.error("notify mime failed", error);
+    console.error("notify mimetext failed", error);
     return { ok: false, error: errorMessage(error) };
   }
 }
 
+function buildRawMessage(subscriber: string, text: string): string {
+  return [
+    `From: "mladenilic.art" <${NOTIFY_FROM}>`,
+    `To: <${NOTIFY_TO}>`,
+    `Reply-To: <${subscriber}>`,
+    `Subject: ${NOTIFY_SUBJECT}`,
+    `Date: ${rfc5322Date()}`,
+    `Message-ID: <${crypto.randomUUID()}@mladenilic.art>`,
+    "MIME-Version: 1.0",
+    'Content-Type: text/plain; charset="utf-8"',
+    "Content-Transfer-Encoding: 8bit",
+    "",
+    text,
+    "",
+  ].join("\r\n");
+}
+
+function rfc5322Date(date = new Date()): string {
+  return date.toUTCString().replace("GMT", "+0000");
+}
+
 function errorMessage(error: unknown): string {
-  if (error && typeof error === "object" && "message" in error) {
-    return String((error as { message: unknown }).message);
+  if (error && typeof error === "object") {
+    const value = error as {
+      message?: unknown;
+      code?: unknown;
+      name?: unknown;
+      cause?: unknown;
+    };
+    const parts = [value.code, value.name, value.message]
+      .filter((part) => part !== undefined && part !== null && part !== "")
+      .map(String);
+    if (value.cause !== undefined) {
+      parts.push(`cause:${errorMessage(value.cause)}`);
+    }
+    if (parts.length > 0) return parts.join(" ");
   }
   return String(error);
 }
