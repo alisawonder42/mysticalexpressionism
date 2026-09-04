@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     console.error("notify send failed", result.error);
   }
   return Response.json(
-    { ok: result.ok },
+    { ok: result.ok, error: result.error ?? null },
     {
       status: result.ok ? 200 : 502,
       headers: { "Cache-Control": "no-store" },
