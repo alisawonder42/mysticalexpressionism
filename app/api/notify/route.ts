@@ -19,8 +19,19 @@ export async function POST(request: Request) {
 
   const result = await sendNotice(email);
   return Response.json(
-    { ok: result.ok, error: result.error ?? null },
-    { status: result.ok ? 200 : 502 },
+    {
+      ok: result.ok,
+      error: result.error ?? null,
+      rev: "notify-e19ef95",
+    },
+    {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store",
+        "x-notify-rev": "notify-e19ef95",
+        "x-notify-error": (result.error ?? "").slice(0, 500),
+      },
+    },
   );
 }
 
