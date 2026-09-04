@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -26,16 +25,10 @@ export function NotifyForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: address }),
       });
-      if (response.ok) {
-        setStatus("sent");
-        return;
-      }
+      setStatus(response.ok ? "sent" : "error");
     } catch {
-      // Fall through to the collector mailbox.
+      setStatus("error");
     }
-
-    window.location.href = mailtoFor(address);
-    setStatus("sent");
   }
 
   if (status === "sent") {
@@ -47,13 +40,7 @@ export function NotifyForm() {
   }
 
   return (
-    <form
-      className="notify-form"
-      onSubmit={onSubmit}
-      action={`mailto:${NOTIFY_TO}`}
-      method="post"
-      encType="text/plain"
-    >
+    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -72,14 +59,11 @@ export function NotifyForm() {
       <button className="button" type="submit" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Notify"}
       </button>
+      {status === "error" ? (
+        <p className="notify-status notify-error" role="alert">
+          Could not send the notification request. Please try again.
+        </p>
+      ) : null}
     </form>
   );
-}
-
-function mailtoFor(address: string): string {
-  const subject = encodeURIComponent("Notify me of new paintings");
-  const body = encodeURIComponent(
-    `${address} asked to be notified when new paintings become available.`,
-  );
-  return `mailto:${NOTIFY_TO}?subject=${subject}&body=${body}`;
 }

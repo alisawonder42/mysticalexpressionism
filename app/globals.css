@@ -209,6 +209,7 @@ h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0
 .notify-label { display: grid; gap: 8px; flex: 1 1 240px; color: var(--muted); font-size: 0.82rem; }
 .notify-label input { min-height: 48px; }
 .notify-status { color: var(--muted); font-size: 0.95rem; margin: 12px 0 0; }
+.notify-error { color: #d7b4a8; flex-basis: 100%; }
 
 .split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 8vw; align-items: start; }
 .content-narrow { max-width: 780px; }
