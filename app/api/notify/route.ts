@@ -22,13 +22,13 @@ export async function POST(request: Request) {
     {
       ok: result.ok,
       error: result.error ?? null,
-      rev: "notify-e19ef95",
+      rev: "notify-live-b4b0",
     },
     {
       status: 200,
       headers: {
         "Cache-Control": "no-store",
-        "x-notify-rev": "notify-e19ef95",
+        "x-notify-rev": "notify-live-b4b0",
         "x-notify-error": (result.error ?? "").slice(0, 500),
       },
     },
@@ -89,9 +89,11 @@ async function sendNotice(subscriber: string): Promise<SendResult> {
       errors.push(`structured[${index}]: ${result.error}`);
     }
 
-    const raw = await sendRawMime(binding, subscriber, text);
-    if (raw.ok) return raw;
-    errors.push(`raw: ${raw.error}`);
+    for (const [index, rawMessage] of rawVariants(subscriber, text).entries()) {
+      const raw = await sendRawMime(binding, rawMessage);
+      if (raw.ok) return raw;
+      errors.push(`raw[${index}]: ${raw.error}`);
+    }
 
     const mime = await sendMimeText(binding, subscriber, text);
     if (mime.ok) return mime;
@@ -125,19 +127,12 @@ async function trySend(binding: EmailBinding, message: unknown): Promise<SendRes
   }
 }
 
-async function sendRawMime(
-  binding: EmailBinding,
-  subscriber: string,
-  text: string,
-): Promise<SendResult> {
+async function sendRawMime(binding: EmailBinding, raw: string): Promise<SendResult> {
   try {
     const { EmailMessage } = (await import("cloudflare:email")) as {
       EmailMessage: new (from: string, to: string, raw: string) => unknown;
     };
-    return await trySend(
-      binding,
-      new EmailMessage(NOTIFY_FROM, NOTIFY_TO, buildRawMessage(subscriber, text)),
-    );
+    return await trySend(binding, new EmailMessage(NOTIFY_FROM, NOTIFY_TO, raw));
   } catch (error) {
     console.error("notify raw mime failed", error);
     return { ok: false, error: errorMessage(error) };
@@ -168,21 +163,49 @@ async function sendMimeText(
   }
 }
 
-function buildRawMessage(subscriber: string, text: string): string {
+function messageId(): string {
+  const token = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+  return `<notify.${token}@mladenilic.art>`;
+}
+
+function rawVariants(subscriber: string, text: string): string[] {
+  const id = messageId();
   return [
-    `From: "mladenilic.art" <${NOTIFY_FROM}>`,
-    `To: <${NOTIFY_TO}>`,
-    `Reply-To: <${subscriber}>`,
-    `Subject: ${NOTIFY_SUBJECT}`,
-    `Date: ${rfc5322Date()}`,
-    `Message-ID: <${crypto.randomUUID()}@mladenilic.art>`,
-    "MIME-Version: 1.0",
-    'Content-Type: text/plain; charset="utf-8"',
-    "Content-Transfer-Encoding: 8bit",
-    "",
-    text,
-    "",
-  ].join("\r\n");
+    [
+      `From: mladenilic.art <${NOTIFY_FROM}>`,
+      `To: studio <${NOTIFY_TO}>`,
+      `Message-ID: ${id}`,
+      "MIME-Version: 1.0",
+      "Content-Type: text/plain",
+      "",
+      text,
+    ].join("\r\n"),
+    [
+      `From: ${NOTIFY_FROM}`,
+      `To: ${NOTIFY_TO}`,
+      `Reply-To: ${subscriber}`,
+      `Subject: ${NOTIFY_SUBJECT}`,
+      `Message-ID: ${id}`,
+      "MIME-Version: 1.0",
+      "Content-Type: text/plain; charset=utf-8",
+      "",
+      text,
+    ].join("\r\n"),
+    [
+      `From: "mladenilic.art" <${NOTIFY_FROM}>`,
+      `To: <${NOTIFY_TO}>`,
+      `Reply-To: <${subscriber}>`,
+      `Subject: ${NOTIFY_SUBJECT}`,
+      `Date: ${rfc5322Date()}`,
+      `Message-ID: ${id}`,
+      "MIME-Version: 1.0",
+      'Content-Type: text/plain; charset="utf-8"',
+      "Content-Transfer-Encoding: 8bit",
+      "",
+      text,
+      "",
+    ].join("\r\n"),
+  ];
 }
 
 function rfc5322Date(date = new Date()): string {

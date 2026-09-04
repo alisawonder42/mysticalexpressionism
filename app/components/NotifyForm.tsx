@@ -40,7 +40,7 @@ export function NotifyForm() {
   }
 
   return (
-    <form className="notify-form" onSubmit={onSubmit}>
+    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -60,8 +60,8 @@ export function NotifyForm() {
         {status === "sending" ? "Sending…" : "Notify"}
       </button>
       {status === "error" ? (
-        <p className="notify-status" role="alert">
-          That could not be sent. Please try again.
+        <p className="notify-status notify-error" role="alert">
+          Could not send the notification request. Please try again.
         </p>
       ) : null}
     </form>
