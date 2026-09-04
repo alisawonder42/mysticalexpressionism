@@ -76,23 +76,27 @@ h1, h2, .art-title {
   font-weight: 400;
 }
 h1 { font-size: clamp(3.4rem, 8vw, 8.2rem); line-height: 0.92; letter-spacing: -0.02em; margin-bottom: 28px; }
+.hero-artist h1 { margin-bottom: 0; }
 h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0.015em; }
 
-.hero-artist { padding: 56px 0 0; }
-.hero-artist-head { max-width: 920px; margin-bottom: 36px; }
+.hero-artist { padding: 36px 0 0; }
+.hero-artist-head { max-width: 920px; margin-bottom: 20px; }
 .hero-portrait {
   background: var(--bg-soft);
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: visible;
+  height: calc(100svh - 15.5rem);
+  max-height: calc(100svh - 15.5rem);
+  min-height: 200px;
+  overflow: hidden;
 }
 .hero-portrait img {
   display: block;
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: calc(100svh - 140px);
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
@@ -242,6 +246,10 @@ textarea { min-height: 180px; resize: vertical; }
 }
 
 @media (max-width: 600px) {
+  .hero-portrait {
+    height: calc(100svh - 17.5rem);
+    max-height: calc(100svh - 17.5rem);
+  }
   .site-header, .site-footer, .page, .home-section, .hero-artist, .artwork-page, .closing {
     width: min(calc(100% - 24px), var(--max));
   }
