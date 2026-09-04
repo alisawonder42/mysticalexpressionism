@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { featuredArtworks } from "./data/artworks";
 
 export default function HomePage() {
@@ -14,9 +15,9 @@ export default function HomePage() {
           </p>
           <p className="signature">“Painting is the vibration of my hand following my inner dialogue.”</p>
         </div>
-        <a className="hero-art" href={`/works/${hero.slug}`} aria-label={`View ${hero.title}`}>
+        <Link className="hero-art" href={`/works/${hero.slug}`} aria-label={`View ${hero.title}`}>
           <img src={hero.image} alt={hero.title} />
-        </a>
+        </Link>
       </section>
 
       <section className="home-section">
@@ -32,7 +33,7 @@ export default function HomePage() {
 
         <div className="art-grid">
           {featuredArtworks.map((artwork) => (
-            <a className="art-card" href={`/works/${artwork.slug}`} key={artwork.slug}>
+            <Link className="art-card" href={`/works/${artwork.slug}`} key={artwork.slug}>
               <div className="art-card-image"><img src={artwork.image} alt={artwork.title} /></div>
               <div className="art-meta">
                 <div>
@@ -41,10 +42,10 @@ export default function HomePage() {
                 </div>
                 <div className="price">{artwork.price}</div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
-        <a className="text-link" href="/works">View all works →</a>
+        <Link className="text-link" href="/works">View all works →</Link>
       </section>
 
       <section className="home-section split">
@@ -77,7 +78,7 @@ export default function HomePage() {
           <p>
             Available paintings can be acquired through a direct enquiry. Mladen confirms availability and shipping personally before payment, with PayPal or bank transfer arranged afterwards. Worldwide shipping is available from Serbia.
           </p>
-          <a className="button" href="/works">Explore available works</a>
+          <Link className="button" href="/works">Explore available works</Link>
         </div>
       </section>
 

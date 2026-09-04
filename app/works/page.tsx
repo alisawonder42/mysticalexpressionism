@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { artworks } from "../data/artworks";
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default function WorksPage() {
       </div>
       <div className="works-grid">
         {artworks.map((artwork) => (
-          <a className="art-card" href={`/works/${artwork.slug}`} key={artwork.slug}>
+          <Link className="art-card" href={`/works/${artwork.slug}`} key={artwork.slug}>
             <div className="art-card-image"><img src={artwork.image} alt={artwork.title} /></div>
             <div className="art-meta">
               <div>
@@ -27,7 +28,7 @@ export default function WorksPage() {
               </div>
               <div className="price">{artwork.price}</div>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </main>
