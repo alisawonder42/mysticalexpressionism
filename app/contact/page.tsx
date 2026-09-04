@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { CONTACT_EMAIL, INSTAGRAM_URL } from "../data/copy";
+import { CONTACT_EMAIL, INSTAGRAM_URL, NOTIFY_MAILTO } from "../data/copy";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contact Mladen Ilic about available paintings, private commissions and collector enquiries.",
+    "Contact Mladen Ilic about available paintings and collector enquiries.",
 };
 
 export default function ContactPage() {
@@ -14,8 +14,8 @@ export default function ContactPage() {
         <div className="section-label">Collector enquiries</div>
         <h1>Contact</h1>
         <p>
-          For acquisition enquiries, shipping questions, private commissions or studio-list
-          requests, contact Mladen directly.
+          For acquisition enquiries, shipping questions or to be notified when new
+          paintings become available, contact Mladen directly.
         </p>
       </div>
       <div className="content-narrow">
@@ -35,9 +35,14 @@ export default function ContactPage() {
           Worldwide shipping is available from Serbia. Shipping method, cost and delivery
           estimate are confirmed individually before payment.
         </p>
-        <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
-          Send an email
-        </a>
+        <div className="actions">
+          <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
+            Send an email
+          </a>
+          <a className="button" href={NOTIFY_MAILTO}>
+            Get notified of new pieces
+          </a>
+        </div>
       </div>
     </main>
   );
