@@ -15,10 +15,10 @@
   "images": { "binding": "IMAGES" },
   "workers_dev": true,
   "observability": { "enabled": true },
-  "send_email": [
+  "kv_namespaces": [
     {
-      "name": "NOTIFY_EMAIL",
-      "destination_address": "mysticalexpressionismpaintings@gmail.com"
+      "binding": "NOTIFY_SUBSCRIBERS",
+      "id": "ce95ceb56cb44e2fbdaeb673e8874183"
     }
   ]
 }

@@ -16,7 +16,16 @@ export default function HomePage() {
       <section className="hero-artist">
         <div className="hero-artist-head">
           <div className="eyebrow">Painter · Novi Sad, Serbia</div>
-          <h1>Mladen Ilic</h1>
+          <h1 className="hero-name">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className="hero-signature"
+              src="/mladen-signature.png"
+              alt="Mladen Ilic"
+              width={2400}
+              height={585}
+            />
+          </h1>
         </div>
         <figure className="hero-portrait">
           {/* eslint-disable-next-line @next/next/no-img-element */}

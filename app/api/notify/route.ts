@@ -1,14 +1,23 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
+
+type KvNamespace = {
+  put: (key: string, value: string) => Promise<void>;
+};
 
 export async function POST(request: Request) {
   const email = await readEmail(request);
   if (!email || !EMAIL_PATTERN.test(email)) {
-    return Response.json({ ok: false }, { status: 400 });
+    return Response.json({ ok: false, error: "invalid email" }, { status: 400 });
   }
 
-  const sent = await sendViaCloudflare(email);
-  return Response.json({ ok: sent }, { status: sent ? 200 : 502 });
+  const saved = await saveSubscriber(email);
+  return Response.json(
+    { ok: saved },
+    {
+      status: saved ? 200 : 500,
+      headers: { "Cache-Control": "no-store" },
+    },
+  );
 }
 
 async function readEmail(request: Request): Promise<string> {
@@ -25,40 +34,22 @@ async function readEmail(request: Request): Promise<string> {
   }
 }
 
-async function sendViaCloudflare(subscriber: string): Promise<boolean> {
+async function saveSubscriber(email: string): Promise<boolean> {
   try {
     const { env } = (await import("cloudflare:workers")) as {
-      env: { NOTIFY_EMAIL?: { send: (message: unknown) => Promise<void> } };
+      env: { NOTIFY_SUBSCRIBERS?: KvNamespace };
     };
-    if (!env.NOTIFY_EMAIL) {
-      return false;
-    }
+    const kv = env.NOTIFY_SUBSCRIBERS;
+    if (!kv) return false;
 
-    const { EmailMessage } = (await import("cloudflare:email")) as {
-      EmailMessage: new (from: string, to: string, raw: string) => unknown;
-    };
-
-    const from = "notify@mladenilic.art";
-    const text = [
-      `${subscriber} asked to be notified when new paintings become available.`,
-      "",
-      `This notice was sent to ${NOTIFY_TO}.`,
-      "Reply to this message to reach them.",
-    ].join("\n");
-    const raw = [
-      `From: "mladenilic.art" <${from}>`,
-      `To: ${NOTIFY_TO}`,
-      `Reply-To: ${subscriber}`,
-      "Subject: Notify me of new paintings",
-      "MIME-Version: 1.0",
-      "Content-Type: text/plain; charset=utf-8",
-      "",
-      text,
-    ].join("\r\n");
-
-    await env.NOTIFY_EMAIL.send(new EmailMessage(from, NOTIFY_TO, raw));
+    const createdAt = new Date().toISOString();
+    await kv.put(
+      `email:${email.toLowerCase()}`,
+      JSON.stringify({ email, createdAt }),
+    );
     return true;
-  } catch {
+  } catch (error) {
+    console.error("notify save failed", error);
     return false;
   }
 }

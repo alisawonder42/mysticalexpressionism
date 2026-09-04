@@ -3,9 +3,8 @@
 import { useState } from "react";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
 
-type Status = "idle" | "sending" | "sent" | "error";
+type Status = "idle" | "saving" | "saved" | "error";
 
 export function NotifyForm() {
   const [email, setEmail] = useState("");
@@ -19,26 +18,21 @@ export function NotifyForm() {
       return;
     }
 
-    setStatus("sending");
+    setStatus("saving");
     try {
       const response = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: address }),
       });
-      if (response.ok) {
-        setStatus("sent");
-        return;
-      }
+      const body = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+      setStatus(response.ok && body?.ok ? "saved" : "error");
     } catch {
-      // Fall through to the collector mailbox.
+      setStatus("error");
     }
-
-    window.location.href = mailtoFor(address);
-    setStatus("sent");
   }
 
-  if (status === "sent") {
+  if (status === "saved") {
     return (
       <p className="notify-status" role="status">
         You will be notified when new paintings become available.
@@ -47,13 +41,7 @@ export function NotifyForm() {
   }
 
   return (
-    <form
-      className="notify-form"
-      onSubmit={onSubmit}
-      action={`mailto:${NOTIFY_TO}`}
-      method="post"
-      encType="text/plain"
-    >
+    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -69,17 +57,14 @@ export function NotifyForm() {
           placeholder="your@email.com"
         />
       </label>
-      <button className="button" type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Sending…" : "Notify"}
+      <button className="button" type="submit" disabled={status === "saving"}>
+        {status === "saving" ? "Saving…" : "Notify"}
       </button>
+      {status === "error" ? (
+        <p className="notify-status notify-error" role="alert">
+          Could not save your email. Please try again.
+        </p>
+      ) : null}
     </form>
   );
-}
-
-function mailtoFor(address: string): string {
-  const subject = encodeURIComponent("Notify me of new paintings");
-  const body = encodeURIComponent(
-    `${address} asked to be notified when new paintings become available.`,
-  );
-  return `mailto:${NOTIFY_TO}?subject=${subject}&body=${body}`;
 }
