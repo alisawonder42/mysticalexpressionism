@@ -7,6 +7,8 @@ const eslintConfig = [
       '.next/**',
       'out/**',
       'build/**',
+      'dist/**',
+      '.vinext/**',
       'next-env.d.ts',
       'node_modules/**',
     ],

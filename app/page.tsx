@@ -1,93 +1,92 @@
-import { featuredArtworks } from "./data/artworks";
+import Link from "next/link";
+import { ArtworkCard } from "./components/ArtworkCard";
+import { ProcessVideo } from "./components/ProcessVideo";
+import { homepageArtworks } from "./data/artworks";
+import {
+  ABOUT_PARAGRAPHS,
+  ARTIST_PORTRAIT,
+  CONTACT_EMAIL,
+  PROCESS_PARAGRAPHS,
+} from "./data/copy";
 
 export default function HomePage() {
-  const hero = featuredArtworks[0];
-
   return (
     <main>
-      <section className="hero">
-        <div className="hero-copy">
-          <div className="eyebrow">Contemporary painter · Serbia</div>
-          <h1>Mladen<br />Ilic</h1>
-          <p>
-            Paintings built slowly through intuition, revision and return — where the human figure becomes a carrier of inner states rather than a fixed portrait.
-          </p>
-          <p className="signature">“Painting is the vibration of my hand following my inner dialogue.”</p>
+      <section className="hero-artist">
+        <div className="hero-artist-head">
+          <div className="eyebrow">Painter · Novi Sad, Serbia</div>
+          <h1>Mladen Ilic</h1>
         </div>
-        <a className="hero-art" href={`/works/${hero.slug}`} aria-label={`View ${hero.title}`}>
-          <img src={hero.image} alt={hero.title} />
-        </a>
+        <figure className="hero-portrait">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ARTIST_PORTRAIT} alt="Mladen Ilic in his studio" />
+        </figure>
+      </section>
+
+      <section className="home-section" id="about">
+        <div className="section-label">About</div>
+        <div className="about-lede">
+          {ABOUT_PARAGRAPHS.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+        <Link className="text-link" href="/about">
+          More about Mladen
+        </Link>
       </section>
 
       <section className="home-section">
         <div className="section-head">
           <div>
-            <div className="eyebrow">Selected works</div>
-            <h2>Recent paintings</h2>
+            <div className="section-label">Paintings</div>
+            <h2>Latest works</h2>
           </div>
           <p>
-            Each work is one of a kind, signed and accompanied by a certificate of authenticity. The surface is often more physical and layered than a screen can reproduce.
+            Each painting is a unique work, signed and accompanied by a certificate of
+            authenticity. Surfaces are often more physical and layered than a screen can
+            reproduce.
           </p>
         </div>
-
         <div className="art-grid">
-          {featuredArtworks.map((artwork) => (
-            <a className="art-card" href={`/works/${artwork.slug}`} key={artwork.slug}>
-              <div className="art-card-image"><img src={artwork.image} alt={artwork.title} /></div>
-              <div className="art-meta">
-                <div>
-                  <div className="art-title">{artwork.title}</div>
-                  <div className="art-sub">{artwork.year} · {artwork.size}</div>
-                </div>
-                <div className="price">{artwork.price}</div>
-              </div>
-            </a>
+          {homepageArtworks.map((artwork) => (
+            <ArtworkCard key={artwork.slug} artwork={artwork} />
           ))}
         </div>
-        <a className="text-link" href="/works">View all works →</a>
+        <Link className="text-link" href="/works">
+          View all works
+        </Link>
       </section>
 
-      <section className="home-section split">
-        <div className="split-copy">
-          <div className="eyebrow">The practice</div>
-          <h2>Paintings that are allowed to become.</h2>
-          <p>
-            Mladen Ilic has painted since childhood. Trained in literature and working as a literature professor, he approaches painting without a predetermined image. A work can take thirty, fifty, one hundred or more hours — and may be reopened years later when it still feels unfinished.
-          </p>
-          <p>
-            Recent works have become more figurative, but the figure is never merely descriptive. It carries fatigue, acceptance, consciousness, desire, fear or release. Layers of oil, pastel and gesso accumulate until the image feels resolved rather than simply completed.
-          </p>
-          <div className="stat-row">
-            <div className="stat"><strong>150+</strong><span>original works collected internationally</span></div>
-            <div className="stat"><strong>73</strong><span>verified collector reviews on Artfinder</span></div>
-            <div className="stat"><strong>2016</strong><span>selling internationally through Artfinder since</span></div>
+      <section className="home-section">
+        <div className="section-head">
+          <div>
+            <div className="section-label">Studio / Process</div>
+            <h2>How the work is made</h2>
           </div>
+          <p>{PROCESS_PARAGRAPHS[0]}</p>
         </div>
-        <div className="process-media">
-          <img src="https://static.wixstatic.com/media/8ffb5c_7f413cb9c30d48ccb05d14870de75e48~mv2.jpg" alt="Mladen Ilic in the studio" />
-        </div>
+        <ProcessVideo />
+        <Link className="text-link" href="/process">
+          Read the full process
+        </Link>
       </section>
 
-      <section className="home-section split">
-        <div>
-          <div className="eyebrow">For collectors</div>
-          <h2>Acquire a work directly.</h2>
-        </div>
-        <div className="split-copy">
-          <p>
-            Available paintings can be acquired through a direct enquiry. Mladen confirms availability and shipping personally before payment, with PayPal or bank transfer arranged afterwards. Worldwide shipping is available from Serbia.
-          </p>
-          <a className="button" href="/works">Explore available works</a>
-        </div>
-      </section>
-
-      <section className="newsletter">
-        <div className="eyebrow">Private Studio List</div>
-        <h2>See new work before it becomes public.</h2>
+      <section className="closing">
+        <div className="section-label">Enquiries</div>
+        <h2>Acquire a work directly.</h2>
         <p>
-          Private previews of new paintings, studio notes and process material that is not posted elsewhere. New works are shared with the list before public release.
+          Available paintings are acquired through a direct enquiry. Availability and
+          shipping are confirmed personally before any payment. Worldwide shipping is
+          arranged from Serbia.
         </p>
-        <a className="button" href="mailto:mysticalexpressionismpaintings@gmail.com?subject=Private%20Studio%20List">Join the studio list</a>
+        <div className="actions">
+          <Link className="button" href="/works">
+            Explore available works
+          </Link>
+          <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
+            Contact the studio
+          </a>
+        </div>
       </section>
     </main>
   );
