@@ -30,12 +30,10 @@ export default async function ArtworkPage({ params }: Props) {
   const artwork = getArtwork(slug);
   if (!artwork) notFound();
 
-  const subject = encodeURIComponent(`Acquisition enquiry — ${artwork.title}`);
+  const subject = encodeURIComponent(`Enquiry — ${artwork.title}`);
   const body = encodeURIComponent(
     `Hello Mladen,\n\nI am interested in acquiring ${artwork.title}. Please confirm availability and shipping to my location.\n\nThank you.`,
   );
-  const question = encodeURIComponent(`Question about ${artwork.title}`);
-
   const details: [string, string][] = [
     ...(artwork.year === null ? [] : ([["Year", String(artwork.year)]] as [string, string][])),
     ["Medium", artwork.medium],
@@ -87,10 +85,7 @@ export default async function ArtworkPage({ params }: Props) {
               className="button"
               href={`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`}
             >
-              Acquire this work
-            </a>
-            <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${question}`}>
-              Ask about this work
+              Enquire about this work
             </a>
           </div>
           <p className="art-sub artwork-note">
