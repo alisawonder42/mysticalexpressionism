@@ -17,15 +17,15 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "invalid email" }, { status: 400 });
   }
 
+  console.info("notify signup", email);
   const result = await sendNotice(email);
   return Response.json(
     {
       ok: result.ok,
       error: result.error ?? null,
-      rev: "notify-live-b4b0",
     },
     {
-      status: 200,
+      status: result.ok ? 200 : 502,
       headers: {
         "Cache-Control": "no-store",
         "x-notify-rev": "notify-live-b4b0",
