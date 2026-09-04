@@ -10,12 +10,7 @@ import {
   PROCESS_PARAGRAPHS,
 } from "./data/copy";
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ notified?: string }>;
-}) {
-  const { notified } = await searchParams;
+export default function HomePage() {
   return (
     <main>
       <section className="hero-artist">
@@ -90,10 +85,7 @@ export default async function HomePage({
         <div className="notify-block">
           <div className="section-label">New work</div>
           <p>Leave your email to be notified when new paintings become available.</p>
-          <NotifyForm
-            nextUrl="https://mladenilic.art/?notified=1"
-            sent={notified === "1"}
-          />
+          <NotifyForm />
         </div>
       </section>
     </main>

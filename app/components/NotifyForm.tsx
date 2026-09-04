@@ -1,12 +1,37 @@
-import { CONTACT_EMAIL } from "../data/copy";
+"use client";
 
-type Props = {
-  nextUrl: string;
-  sent?: boolean;
-};
+import { useState } from "react";
 
-export function NotifyForm({ nextUrl, sent = false }: Props) {
-  if (sent) {
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type Status = "idle" | "sending" | "sent" | "error";
+
+export function NotifyForm() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const address = email.trim();
+    if (!EMAIL_PATTERN.test(address)) {
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    try {
+      const response = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: address }),
+      });
+      setStatus(response.ok ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "sent") {
     return (
       <p className="notify-status" role="status">
         You will be notified when new paintings become available.
@@ -15,20 +40,7 @@ export function NotifyForm({ nextUrl, sent = false }: Props) {
   }
 
   return (
-    <form
-      className="notify-form"
-      action={`https://formsubmit.co/${CONTACT_EMAIL}`}
-      method="POST"
-    >
-      <input type="hidden" name="_subject" value="Notify me of new paintings" />
-      <input type="hidden" name="_template" value="table" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_next" value={nextUrl} />
-      <input
-        type="hidden"
-        name="message"
-        value="This person asked to be notified when new paintings become available."
-      />
+    <form className="notify-form" onSubmit={onSubmit}>
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -36,12 +48,22 @@ export function NotifyForm({ nextUrl, sent = false }: Props) {
           name="email"
           autoComplete="email"
           required
+          value={email}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            if (status === "error") setStatus("idle");
+          }}
           placeholder="your@email.com"
         />
       </label>
-      <button className="button" type="submit">
-        Notify
+      <button className="button" type="submit" disabled={status === "sending"}>
+        {status === "sending" ? "Sending…" : "Notify"}
       </button>
+      {status === "error" ? (
+        <p className="notify-status" role="alert">
+          That could not be sent. Please try again.
+        </p>
+      ) : null}
     </form>
   );
 }
