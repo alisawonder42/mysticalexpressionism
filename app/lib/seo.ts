@@ -22,6 +22,10 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 
 export { ARTFINDER_PROFILE_URL, INSTAGRAM_URL, ARTIST_PORTRAIT };
 
+export const ARTIST_PORTRAIT_URL = ARTIST_PORTRAIT.startsWith("http")
+  ? ARTIST_PORTRAIT
+  : `${SITE_URL}${ARTIST_PORTRAIT}`;
+
 export const DEFAULT_TITLE =
   "Mladen Ilic (Mladen Ilić) — Painter in Novi Sad";
 
@@ -51,7 +55,7 @@ export const SITE_KEYWORDS = [
 ];
 
 export const PORTRAIT_OG_IMAGE = {
-  url: ARTIST_PORTRAIT,
+  url: ARTIST_PORTRAIT_URL,
   alt: "Portrait of Mladen Ilic, painter in Novi Sad",
 };
 
@@ -74,7 +78,7 @@ export function personJsonLd(): JsonLd {
     name: ARTIST_NAME,
     alternateName: [ARTIST_NAME_ACCENTED, ARTIST_NAME],
     url: SITE_URL,
-    image: ARTIST_PORTRAIT,
+    image: ARTIST_PORTRAIT_URL,
     jobTitle: "Painter",
     description: `${ABOUT_PARAGRAPHS[0]} Known on Artfinder as ${ARTIST_NAME_ACCENTED}. ${ABOUT_PARAGRAPHS[1]}`,
     email: CONTACT_EMAIL,
@@ -323,7 +327,7 @@ export function artworkMetadata(artwork: Artwork): Metadata {
       card: "summary_large_image",
       title: `${artwork.title} — ${ARTIST_NAME}`,
       description,
-      images: artwork.images.length > 0 ? [artwork.images[0]] : [ARTIST_PORTRAIT],
+      images: artwork.images.length > 0 ? [artwork.images[0]] : [ARTIST_PORTRAIT_URL],
     },
   };
 }

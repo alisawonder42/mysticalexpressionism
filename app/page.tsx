@@ -29,7 +29,12 @@ export default function HomePage() {
         </div>
         <figure className="hero-portrait">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ARTIST_PORTRAIT} alt="Portrait of Mladen Ilic" />
+          <img
+            src={ARTIST_PORTRAIT}
+            alt="Portrait of Mladen Ilic"
+            width={1620}
+            height={1080}
+          />
         </figure>
       </section>
 

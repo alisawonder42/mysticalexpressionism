@@ -15,8 +15,7 @@ export const PROCESS_PARAGRAPHS = [
 
 export const PROCESS_VIDEO_SRC = "/mladen-process.mp4";
 
-export const ARTIST_PORTRAIT =
-  "https://static.wixstatic.com/media/8ffb5c_d94e77cffeac4003b93555d87b6bca97~mv2.jpg";
+export const ARTIST_PORTRAIT = "/IMG_0817.JPG";
 
 export const CONTACT_EMAIL = "mysticalexpressionismpaintings@gmail.com";
 

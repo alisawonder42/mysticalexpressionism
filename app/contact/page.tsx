@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "../components/JsonLd";
 import { NotifyForm } from "../components/NotifyForm";
 import { CONTACT_EMAIL, INSTAGRAM_URL } from "../data/copy";
-import { ARTIST_PORTRAIT, PORTRAIT_OG_IMAGE, contactPageJsonLd } from "../lib/seo";
+import { ARTIST_PORTRAIT_URL, PORTRAIT_OG_IMAGE, contactPageJsonLd } from "../lib/seo";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Contact Mladen Ilic (Mladen Ilić)",
     description:
       "Collector enquiries for original paintings by Mladen Ilic, painter in Novi Sad. Known on Artfinder as Mladen Ilić.",
-    images: [ARTIST_PORTRAIT],
+    images: [ARTIST_PORTRAIT_URL],
   },
 };
 
