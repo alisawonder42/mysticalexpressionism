@@ -26,7 +26,6 @@ export default function HomePage() {
               height={585}
             />
           </h1>
-          <p className="hero-signature-note">His real handwritten signature.</p>
         </div>
         <figure className="hero-portrait">
           {/* eslint-disable-next-line @next/next/no-img-element */}
