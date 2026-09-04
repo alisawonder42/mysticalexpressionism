@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,10 +33,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <header className="site-header">
-          <a className="brand" href="/">Mladen Ilic</a>
+          <Link className="brand" href="/">Mladen Ilic</Link>
           <nav className="nav" aria-label="Primary navigation">
             {nav.map(([label, href]) => (
-              <a key={href} href={href}>{label}</a>
+              <Link key={href} href={href}>{label}</Link>
             ))}
           </nav>
         </header>

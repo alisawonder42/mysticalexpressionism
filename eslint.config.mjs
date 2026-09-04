@@ -7,6 +7,9 @@ const eslintConfig = [
       '.next/**',
       'out/**',
       'build/**',
+      // vinext build output (bundled vendor code, not ours to lint).
+      'dist/**',
+      '.vinext/**',
       'next-env.d.ts',
       'node_modules/**',
     ],
