@@ -21,8 +21,12 @@ export function NotifyForm() {
 
     setStatus("sending");
     try {
-      const sent = (await sendViaSite(address)) || (await sendViaFormSubmitAjax(address));
-      setStatus(sent ? "sent" : "error");
+      const response = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: address }),
+      });
+      setStatus(response.ok ? "sent" : "error");
     } catch {
       setStatus("error");
     }
@@ -36,8 +40,14 @@ export function NotifyForm() {
     );
   }
 
+  const fallback = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    "Notify me of new paintings",
+  )}&body=${encodeURIComponent(
+    `${email.trim() || "My email"} — please notify me when new paintings become available.`,
+  )}`;
+
   return (
-    <form className="notify-form" onSubmit={onSubmit}>
+    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -58,53 +68,11 @@ export function NotifyForm() {
       </button>
       {status === "error" ? (
         <p className="notify-status" role="alert">
-          That could not be sent. Please try again.
+          That could not be sent automatically.{" "}
+          <a href={fallback}>Email Mladen instead</a>
+          .
         </p>
       ) : null}
     </form>
   );
-}
-
-async function sendViaSite(address: string): Promise<boolean> {
-  try {
-    const response = await fetch("/api/notify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: address }),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
-async function sendViaFormSubmitAjax(address: string): Promise<boolean> {
-  const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      email: address,
-      message: `${address} asked to be notified when new paintings become available.`,
-      _subject: "Notify me of new paintings",
-      _captcha: "false",
-      _template: "table",
-    }),
-  });
-
-  if (!response.ok) {
-    return false;
-  }
-
-  const payload = (await response.json()) as {
-    success?: string | boolean;
-    message?: string;
-  };
-  if (payload.success === true || payload.success === "true") {
-    return true;
-  }
-  const message = (payload.message ?? "").toLowerCase();
-  return message.includes("activation") || message.includes("activate");
 }
