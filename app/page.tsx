@@ -84,7 +84,7 @@ export default function HomePage() {
         </div>
         <div className="notify-block">
           <div className="section-label">New work</div>
-          <p>Leave your email to be notified when new paintings become available.</p>
+          <p>Leave your email to be notified when new paintings become available. The notice is sent to mysticalexpressionismpaintings@gmail.com.</p>
           <NotifyForm />
         </div>
       </section>

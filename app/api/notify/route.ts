@@ -1,6 +1,5 @@
-import { CONTACT_EMAIL } from "../../data/copy";
-
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
 
 export async function POST(request: Request) {
   const email = await readEmail(request);
@@ -9,7 +8,7 @@ export async function POST(request: Request) {
   }
 
   const sent = await sendViaCloudflare(email);
-  return Response.json({ ok: sent }, { status: sent ? 200 : 502 });
+  return Response.json({ ok: sent, to: NOTIFY_TO }, { status: sent ? 200 : 502 });
 }
 
 async function readEmail(request: Request): Promise<string> {
@@ -43,11 +42,12 @@ async function sendViaCloudflare(subscriber: string): Promise<boolean> {
     const text = [
       `${subscriber} asked to be notified when new paintings become available.`,
       "",
+      `This notice was sent to ${NOTIFY_TO}.`,
       "Reply to this message to reach them.",
     ].join("\n");
     const raw = [
       `From: "mladenilic.art" <${from}>`,
-      `To: ${CONTACT_EMAIL}`,
+      `To: ${NOTIFY_TO}`,
       `Reply-To: ${subscriber}`,
       "Subject: Notify me of new paintings",
       "MIME-Version: 1.0",
@@ -56,7 +56,7 @@ async function sendViaCloudflare(subscriber: string): Promise<boolean> {
       text,
     ].join("\r\n");
 
-    await env.NOTIFY_EMAIL.send(new EmailMessage(from, CONTACT_EMAIL, raw));
+    await env.NOTIFY_EMAIL.send(new EmailMessage(from, NOTIFY_TO, raw));
     return true;
   } catch {
     return false;

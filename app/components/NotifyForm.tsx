@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CONTACT_EMAIL } from "../data/copy";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NOTIFY_TO = "mysticalexpressionismpaintings@gmail.com";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -26,28 +26,34 @@ export function NotifyForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: address }),
       });
-      setStatus(response.ok ? "sent" : "error");
+      if (response.ok) {
+        setStatus("sent");
+        return;
+      }
     } catch {
-      setStatus("error");
+      // Fall through to the collector mailbox.
     }
+
+    window.location.href = mailtoFor(address);
+    setStatus("sent");
   }
 
   if (status === "sent") {
     return (
       <p className="notify-status" role="status">
-        You will be notified when new paintings become available.
+        Your address was sent to {NOTIFY_TO}.
       </p>
     );
   }
 
-  const fallback = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-    "Notify me of new paintings",
-  )}&body=${encodeURIComponent(
-    `${email.trim() || "My email"} — please notify me when new paintings become available.`,
-  )}`;
-
   return (
-    <form className="notify-form" onSubmit={onSubmit} action="/api/notify" method="post">
+    <form
+      className="notify-form"
+      onSubmit={onSubmit}
+      action={`mailto:${NOTIFY_TO}`}
+      method="post"
+      encType="text/plain"
+    >
       <label className="notify-label">
         <span>Email</span>
         <input
@@ -66,13 +72,14 @@ export function NotifyForm() {
       <button className="button" type="submit" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Notify"}
       </button>
-      {status === "error" ? (
-        <p className="notify-status" role="alert">
-          That could not be sent automatically.{" "}
-          <a href={fallback}>Email Mladen instead</a>
-          .
-        </p>
-      ) : null}
     </form>
   );
+}
+
+function mailtoFor(address: string): string {
+  const subject = encodeURIComponent("Notify me of new paintings");
+  const body = encodeURIComponent(
+    `${address} asked to be notified when new paintings become available.`,
+  );
+  return `mailto:${NOTIFY_TO}?subject=${subject}&body=${body}`;
 }
