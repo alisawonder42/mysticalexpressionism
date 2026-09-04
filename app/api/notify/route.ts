@@ -14,23 +14,18 @@ type SendResult = { ok: boolean; error?: string };
 export async function POST(request: Request) {
   const email = await readEmail(request);
   if (!email || !EMAIL_PATTERN.test(email)) {
-    return Response.json({ ok: false, error: "invalid email" }, { status: 400 });
+    return Response.json({ ok: false }, { status: 400 });
   }
 
-  console.info("notify signup", email);
   const result = await sendNotice(email);
+  if (!result.ok && result.error) {
+    console.error("notify send failed", result.error);
+  }
   return Response.json(
-    {
-      ok: result.ok,
-      error: result.error ?? null,
-    },
+    { ok: result.ok },
     {
       status: result.ok ? 200 : 502,
-      headers: {
-        "Cache-Control": "no-store",
-        "x-notify-rev": "notify-live-b4b0",
-        "x-notify-error": (result.error ?? "").slice(0, 500),
-      },
+      headers: { "Cache-Control": "no-store" },
     },
   );
 }
