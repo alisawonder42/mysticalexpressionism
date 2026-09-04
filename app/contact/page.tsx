@@ -16,7 +16,7 @@ export default function ContactPage() {
         <h1>Contact</h1>
         <p>
           For acquisition enquiries, shipping questions or to be notified when new
-          paintings become available, contact Mladen directly.
+          paintings and exhibitions become available, contact Mladen directly.
         </p>
       </div>
       <div className="content-narrow">
@@ -43,7 +43,7 @@ export default function ContactPage() {
         </div>
         <div className="notify-block">
           <div className="section-label">New work</div>
-          <p>Leave your email to be notified when new paintings become available.</p>
+          <p>Leave your email to be notified when new paintings and exhibitions become available.</p>
           <NotifyForm />
         </div>
       </div>

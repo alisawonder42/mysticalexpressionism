@@ -35,7 +35,7 @@ export function NotifyForm() {
   if (status === "saved") {
     return (
       <p className="notify-status" role="status">
-        You will be notified when new paintings become available.
+        You will be notified when new paintings and exhibitions become available.
       </p>
     );
   }
