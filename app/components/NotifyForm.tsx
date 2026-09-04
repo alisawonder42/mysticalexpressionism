@@ -41,7 +41,7 @@ export function NotifyForm() {
   if (status === "sent") {
     return (
       <p className="notify-status" role="status">
-        Your address was sent to {NOTIFY_TO}.
+        You will be notified when new paintings become available.
       </p>
     );
   }

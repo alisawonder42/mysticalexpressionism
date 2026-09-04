@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   }
 
   const sent = await sendViaCloudflare(email);
-  return Response.json({ ok: sent, to: NOTIFY_TO }, { status: sent ? 200 : 502 });
+  return Response.json({ ok: sent }, { status: sent ? 200 : 502 });
 }
 
 async function readEmail(request: Request): Promise<string> {
