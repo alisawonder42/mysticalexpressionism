@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
   const result = await sendNotice(email);
   return Response.json(
-    { ok: result.ok },
+    { ok: result.ok, error: result.error ?? null },
     { status: result.ok ? 200 : 502 },
   );
 }
@@ -51,6 +51,7 @@ async function sendNotice(subscriber: string): Promise<{ ok: boolean; error?: st
 
     const mime = await sendMime(binding, subscriber, text);
     if (mime.ok) return mime;
+    return mime;
   }
 
   return { ok: false, error: "email binding unavailable" };
