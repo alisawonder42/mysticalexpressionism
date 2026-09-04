@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s — Mladen Ilic",
   },
   description:
-    "Mladen Ilic is a Serbian painter and professor of Serbian language and literature, based in Novi Sad. Original paintings, private commissions and collector enquiries.",
+    "Mladen Ilic is a Serbian painter and professor of Serbian language and literature, based in Novi Sad. Original paintings and collector enquiries.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Mladen Ilic — Painter",
@@ -38,9 +38,8 @@ export const metadata: Metadata = {
 
 const nav = [
   ["Works", "/works"],
-  ["About", "/about"],
-  ["Process", "/process"],
-  ["Private Commissions", "/private-commissions"],
+  ["About", "/#about"],
+  ["Process", "/#process"],
   ["Contact", "/contact"],
 ] as const;
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArtworkCard } from "./components/ArtworkCard";
 import { ProcessVideo } from "./components/ProcessVideo";
 import { homepageArtworks } from "./data/artworks";
+import { NotifyForm } from "./components/NotifyForm";
 import {
   ABOUT_PARAGRAPHS,
   ARTIST_PORTRAIT,
@@ -19,7 +20,7 @@ export default function HomePage() {
         </div>
         <figure className="hero-portrait">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ARTIST_PORTRAIT} alt="Mladen Ilic in his studio" />
+          <img src={ARTIST_PORTRAIT} alt="Portrait of Mladen Ilic" />
         </figure>
       </section>
 
@@ -30,9 +31,6 @@ export default function HomePage() {
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
-        <Link className="text-link" href="/about">
-          More about Mladen
-        </Link>
       </section>
 
       <section className="home-section">
@@ -57,18 +55,15 @@ export default function HomePage() {
         </Link>
       </section>
 
-      <section className="home-section">
-        <div className="section-head">
-          <div>
-            <div className="section-label">Studio / Process</div>
-            <h2>How the work is made</h2>
-          </div>
-          <p>{PROCESS_PARAGRAPHS[0]}</p>
-        </div>
+      <section className="home-section" id="process">
+        <div className="section-label">Process</div>
+        <h2>Process</h2>
         <ProcessVideo />
-        <Link className="text-link" href="/process">
-          Read the full process
-        </Link>
+        <div className="content-narrow process-copy">
+          {PROCESS_PARAGRAPHS.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
       </section>
 
       <section className="closing">
@@ -84,8 +79,13 @@ export default function HomePage() {
             Explore available works
           </Link>
           <a className="button" href={`mailto:${CONTACT_EMAIL}`}>
-            Contact the studio
+            Contact Mladen
           </a>
+        </div>
+        <div className="notify-block">
+          <div className="section-label">New work</div>
+          <p>Leave your email to be notified when new paintings become available.</p>
+          <NotifyForm />
         </div>
       </section>
     </main>
