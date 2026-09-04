@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type Status = "idle" | "sending" | "sent" | "error";
+type Status = "idle" | "saving" | "saved" | "error";
 
 export function NotifyForm() {
   const [email, setEmail] = useState("");
@@ -18,20 +18,21 @@ export function NotifyForm() {
       return;
     }
 
-    setStatus("sending");
+    setStatus("saving");
     try {
       const response = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: address }),
       });
-      setStatus(response.ok ? "sent" : "error");
+      const body = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+      setStatus(response.ok && body?.ok ? "saved" : "error");
     } catch {
       setStatus("error");
     }
   }
 
-  if (status === "sent") {
+  if (status === "saved") {
     return (
       <p className="notify-status" role="status">
         You will be notified when new paintings become available.
@@ -56,12 +57,12 @@ export function NotifyForm() {
           placeholder="your@email.com"
         />
       </label>
-      <button className="button" type="submit" disabled={status === "sending"}>
-        {status === "sending" ? "Sending…" : "Notify"}
+      <button className="button" type="submit" disabled={status === "saving"}>
+        {status === "saving" ? "Saving…" : "Notify"}
       </button>
       {status === "error" ? (
         <p className="notify-status notify-error" role="alert">
-          Could not send the notification request. Please try again.
+          Could not save your email. Please try again.
         </p>
       ) : null}
     </form>
