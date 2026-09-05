@@ -5,7 +5,7 @@ import { JsonLd } from "./components/JsonLd";
 import { CONTACT_EMAIL, INSTAGRAM_URL } from "./data/copy";
 import {
   ARTFINDER_PROFILE_URL,
-  ARTIST_PORTRAIT,
+  ARTIST_PORTRAIT_URL,
   DEFAULT_DESCRIPTION,
   DEFAULT_TITLE,
   OG_DESCRIPTION,
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
     description: OG_DESCRIPTION,
-    images: [ARTIST_PORTRAIT],
+    images: [ARTIST_PORTRAIT_URL],
   },
 };
 

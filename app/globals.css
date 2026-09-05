@@ -93,30 +93,17 @@ h2 { font-size: clamp(2.2rem, 4.4vw, 4.4rem); line-height: 1; letter-spacing: -0
 
 .hero-artist {
   padding: 20px 0 0;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  height: calc(100svh - 5.75rem);
-  max-height: calc(100svh - 5.75rem);
 }
-.hero-artist-head { max-width: 920px; margin-bottom: 16px; flex: 0 0 auto; }
+.hero-artist-head { max-width: 920px; margin-bottom: 16px; }
 .hero-portrait {
   background: var(--bg-soft);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: hidden;
+  width: 100%;
 }
 .hero-portrait img {
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
   object-fit: contain;
-  object-position: center;
 }
 
 .home-section { padding: 110px 0; border-top: 1px solid var(--line); }
@@ -254,10 +241,6 @@ textarea { min-height: 180px; resize: vertical; }
 
 @media (max-width: 900px) {
   .site-header { height: auto; min-height: 76px; align-items: flex-start; padding: 22px 0; }
-  .hero-artist {
-    height: calc(100svh - 7.5rem);
-    max-height: calc(100svh - 7.5rem);
-  }
   .nav { gap: 13px; flex-wrap: wrap; justify-content: flex-end; max-width: 68%; }
   .art-card { grid-column: span 6; }
   .split, .artwork-layout { grid-template-columns: 1fr; }
@@ -271,14 +254,6 @@ textarea { min-height: 180px; resize: vertical; }
   .hero-signature {
     width: 100%;
     max-height: 5.5rem;
-  }
-  .hero-artist {
-    height: calc(100svh - 8.75rem);
-    max-height: calc(100svh - 8.75rem);
-  }
-  .hero-portrait {
-    height: auto;
-    max-height: none;
   }
   .site-header, .site-footer, .page, .home-section, .hero-artist, .artwork-page, .closing {
     width: min(calc(100% - 24px), var(--max));

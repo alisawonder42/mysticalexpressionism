@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JsonLd } from "../components/JsonLd";
 import { ArtworkCard } from "../components/ArtworkCard";
 import { artworks } from "../data/artworks";
-import { ARTIST_PORTRAIT, PORTRAIT_OG_IMAGE, worksPageJsonLd } from "../lib/seo";
+import { ARTIST_PORTRAIT_URL, PORTRAIT_OG_IMAGE, worksPageJsonLd } from "../lib/seo";
 
 export const metadata: Metadata = {
   title: "Original Paintings",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "Original Paintings — Mladen Ilic (Mladen Ilić)",
     description:
       "Unique original paintings by Mladen Ilic, painter in Novi Sad. Also known on Artfinder as Mladen Ilić.",
-    images: [ARTIST_PORTRAIT],
+    images: [ARTIST_PORTRAIT_URL],
   },
 };
 
